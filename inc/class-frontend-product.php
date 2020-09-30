@@ -268,7 +268,39 @@ if (!class_exists('MSPC_Frontend_Product')) {
 						</div><!-- Content -->
 
 					<?php endif; ?>
-					<a href="#" class="mspc-clear-selection"><?php _e('Clear selection', 'radykal'); ?></a>
+					<!-- MRR - Add Peaceyard Note after MSPC -->
+					<div class="py-wrapper">
+						<div class="py-note" style="flex-basis: 68%;">
+							<div class="py-msg" style="flex-basis: 70%;">
+								<h3>
+									<?php _e('Design your memorial below or get help from us with your design', 'peaceyard-product'); ?>
+								</h3>
+								<p>
+									<?php _e('Our goal is to provide you everything you need to create the most
+									unique and personalized memorial. You can customize our memorial on
+									your own or get help from one of our professionals.', 'peaceyard-product'); ?>
+								</p>
+							</div>
+							<div class="py-cta" style="flex-basis: 30%;">
+								<?php
+								$model_slug =  basename(strtok($_SERVER["REQUEST_URI"], '?'));
+
+								$link_params = "?your-subject=" . __('Headstone+Design+Request+model+', 'page-models') . $model_slug . "&headstone-type=" . $model_slug;
+
+								$quote_string = __('/help/headstone-design-request', 'language-links');
+
+								$model_help = get_site_url() . $quote_string . $link_params;
+								?>
+								<a class=" py-note-btn" href="<?php echo $model_help; ?>" target="_self"><?php _e('Please help me', 'peaceyard-product'); ?></a>
+							</div>
+						</div>
+						<div class="py-mspc-clear" style="flex-basis: 32%;">
+							<a href="#" class="mspc-clear-selection"><?php _e('Clear selection', 'radykal'); ?></a>
+						</div>
+					</div>
+
+					<!-- <a href="#" class="mspc-clear-selection"><?php _e('Clear selection', 'radykal'); ?></a> -->
+					<!-- MRR-END -->
 
 				</div><!-- Wrapper --->
 
@@ -498,8 +530,36 @@ if (!class_exists('MSPC_Frontend_Product')) {
 
 		private function get_image_id($url)
 		{
-
+			//MRR-Get the domain
+			if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $url, $regs)) {
+				$domain = $regs['domain'];
+			} else {
+				$domain = "www";
+			}
 			// Split the $url into two parts with the wp-content directory as the separator
+			$parsed_url  = explode(parse_url(WP_CONTENT_URL, PHP_URL_PATH), $url);
+			// Get the host of the current site and the host of the $url, ignoring www
+			$this_host = str_ireplace($domain, '', parse_url(home_url(), PHP_URL_HOST));
+			$file_host = str_ireplace($domain, '', parse_url($url, PHP_URL_HOST));
+
+			// Return nothing if there aren't any $url parts or if the current host and $url host do not match
+			if (!isset($parsed_url[1]) || empty($parsed_url[1]) || ($this_host != $file_host)) {
+				return;
+			}
+			//MRR-END
+
+			//MRR - Remove slow query of transparent.png
+			if ($parsed_url[1] === '/uploads/2020/01/transparent.png') {
+				$attachment = '/uploads/2020/01/transparent.png';
+			} else {
+				global $wpdb;
+				$attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM {$wpdb->prefix}posts WHERE guid RLIKE %s;", $parsed_url[1]));
+			}
+
+			return empty($attachment) ? null : $attachment[0];
+
+
+			/* // Split the $url into two parts with the wp-content directory as the separator
 			$parsed_url  = explode(parse_url(WP_CONTENT_URL, PHP_URL_PATH), $url);
 			// Get the host of the current site and the host of the $url, ignoring www
 			$this_host = str_ireplace('www.', '', parse_url(home_url(), PHP_URL_HOST));
@@ -513,7 +573,8 @@ if (!class_exists('MSPC_Frontend_Product')) {
 			global $wpdb;
 			$attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM {$wpdb->prefix}posts WHERE guid RLIKE %s;", $parsed_url[1]));
 			// Returns null if no attachment is found
-			return empty($attachment) ? null : $attachment[0];
+			return empty($attachment) ? null : $attachment[0]; */
+			//MRR-END
 		}
 	}
 }
