@@ -80,13 +80,12 @@ if (!class_exists('MSPC_Frontend_Product')) {
 				}
 				//before fancy product designer
 				else if ($module_pos == 'before_fancy_product_designer') {
-					// MRR - Add MSPC when a fpd product loaded from raq, cart or non of them
+					// Add MSPC when a fpd product loaded from raq, cart or non of them
 					if (isset($_GET['raq_item_key'])) {
 						add_action('fpd_before_product_designer_raq', array(&$this, 'add_mspc_form'), 20);
 					} else {
 						add_action('fpd_before_product_designer', array(&$this, 'add_mspc_form'), 20);
 					}
-					// MRR-END
 				}
 				//after fancy product designer
 				else if ($module_pos == 'after_fancy_product_designer') {
@@ -274,7 +273,7 @@ if (!class_exists('MSPC_Frontend_Product')) {
 						</div><!-- Content -->
 
 					<?php endif; ?>
-					<!-- MRR - Add Peaceyard Note after MSPC -->
+					<!-- Add Peaceyard Note after MSPC -->
 					<div class="py-wrapper">
 						<div class="py-note" style="flex-basis: 68%;">
 							<div class="py-msg" style="flex-basis: 70%;">
@@ -306,7 +305,7 @@ if (!class_exists('MSPC_Frontend_Product')) {
 					</div>
 
 					<!-- <a href="#" class="mspc-clear-selection"><?php _e('Clear selection', 'radykal'); ?></a> -->
-					<!-- MRR-END -->
+
 
 				</div><!-- Wrapper --->
 
@@ -536,7 +535,7 @@ if (!class_exists('MSPC_Frontend_Product')) {
 
 		private function get_image_id($url)
 		{
-			//MRR-Get the domain
+			//Get the domain
 			if (preg_match('/(?P<domain>[a-z0-9][a-z0-9\-]{1,63}\.[a-z\.]{2,6})$/i', $url, $regs)) {
 				$domain = $regs['domain'];
 			} else {
@@ -552,9 +551,9 @@ if (!class_exists('MSPC_Frontend_Product')) {
 			if (!isset($parsed_url[1]) || empty($parsed_url[1]) || ($this_host != $file_host)) {
 				return;
 			}
-			//MRR-END
 
-			//MRR - Remove slow query of transparent.png
+
+			//Remove slow query of transparent.png
 			if ($parsed_url[1] === '/uploads/2020/01/transparent.png') {
 				$attachment = '/uploads/2020/01/transparent.png';
 			} else {
@@ -580,7 +579,6 @@ if (!class_exists('MSPC_Frontend_Product')) {
 			$attachment = $wpdb->get_col($wpdb->prepare("SELECT ID FROM {$wpdb->prefix}posts WHERE guid RLIKE %s;", $parsed_url[1]));
 			// Returns null if no attachment is found
 			return empty($attachment) ? null : $attachment[0]; */
-			//MRR-END
 		}
 	}
 }
