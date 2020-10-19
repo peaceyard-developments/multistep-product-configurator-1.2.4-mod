@@ -80,13 +80,8 @@ if (!class_exists('MSPC_Frontend_Product')) {
 				}
 				//before fancy product designer
 				else if ($module_pos == 'before_fancy_product_designer') {
-					// MRR - Add MSPC when a fpd product loaded from raq, cart or non of them
-					if (isset($_GET['raq_item_key'])) {
-						add_action('fpd_before_product_designer_raq', array(&$this, 'add_mspc_form'), 20);
-					} else {
-						add_action('fpd_before_product_designer', array(&$this, 'add_mspc_form'), 20);
-					}
-					// MRR-END
+
+					add_action('fpd_before_product_designer', array(&$this, 'add_mspc_form'), 20);
 				}
 				//after fancy product designer
 				else if ($module_pos == 'after_fancy_product_designer') {
